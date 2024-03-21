@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Recommendation System</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+    /* CSS styles */
+</style>
+</head>
+<body>
+
+<div class="container">
+    <label for="movie">Enter a movie:</label>
+    <input type="text" id="movie" placeholder="Movie Title">
+    <button onclick="getRecommendations()">Submit</button>
+    <div class="output" id="output"></div>
+</div>
+
+<script>
+function getRecommendations() {
+    var inputMovie = document.getElementById("movie").value.trim();
+    var outputDiv = document.getElementById("output");
+
+    if (!inputMovie) {
+        outputDiv.innerHTML = "<p style='color: red;'>Please enter a movie.</p>";
+        return;
+    }
+
+    $.ajax({
+        url: "http://localhost:5000/recommendations",
+        type: "GET",
+        data: { movie_name: inputMovie },
+        dataType: "json",
+        success: function(data) {
+            var html = "<h3>Similar Movies:</h3><ul>";
+            data.forEach(function(item) {
+                html += "<li>" + item.title + " (" + item.genres + ") - Score: " + item.score.toFixed(2) + "</li>";
+            });
+            html += "</ul>";
+            outputDiv.innerHTML = html;
+        },
+        error: function(xhr, status, error) {
+            outputDiv.innerHTML = "<p style='color: red;'>Error: " + error + "</p>";
+        }
+    });
+}
+</script>
+
+</body>
+</html>
